@@ -1,7 +1,7 @@
 package app.lws.scaledimens
 
 import com.android.build.api.variant.AndroidComponentsExtension
-import com.android.build.gradle.AppPlugin
+import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.api.AndroidSourceDirectorySet
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -10,7 +10,7 @@ import java.io.File
 
 class ScaleDimensPlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        project.plugins.withType(AppPlugin::class.java) {
+        project.plugins.withType(BasePlugin::class.java) {
 
             val extension =
                 project.extensions.create("scaleDimens", ScaleDimensExtension::class.java)

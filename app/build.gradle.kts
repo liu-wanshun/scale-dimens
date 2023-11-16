@@ -8,7 +8,7 @@ android {
     namespace = "app.lws.scaledimens.demo"
     compileSdk = 34
     defaultConfig {
-        minSdk = 21
+        minSdk = 24
         targetSdk = 34
     }
 
@@ -22,4 +22,7 @@ java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
     }
+}
+dependencies {
+    implementation(project(mapOf("path" to ":library")))
 }
