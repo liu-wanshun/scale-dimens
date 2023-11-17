@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("app.lws.scaledimens")
+    //id("io.github.liu-wanshun.scale-dimens")
 }
 
 android {
@@ -12,10 +12,10 @@ android {
         targetSdk = 34
     }
 
-    scaleDimens {
-        baseSw = 360
-        generateSwList = intArrayOf(360, 720)
-    }
+//    scaleDimens {
+//        baseSw = 360
+//        generateSwList = intArrayOf(360, 720)
+//    }
 }
 
 java {

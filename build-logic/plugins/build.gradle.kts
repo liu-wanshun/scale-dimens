@@ -1,6 +1,7 @@
 plugins {
     `java-gradle-plugin`
     alias(libs.plugins.kotlin.jvm)
+    `maven-publish`
 }
 
 java {
@@ -18,7 +19,7 @@ dependencies {
 gradlePlugin {
     plugins {
         create("scaleDimensPlugin") {
-            id = "app.lws.scaledimens"
+            id = "io.github.liu-wanshun.scale-dimens"
             implementationClass = "app.lws.scaledimens.ScaleDimensPlugin"
         }
     }
