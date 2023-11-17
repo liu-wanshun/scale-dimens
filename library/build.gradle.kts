@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    //id("io.github.liu-wanshun.scale-dimens")
+    id("io.github.liu-wanshun.scale-dimens")
 }
 
 android {
@@ -26,7 +26,7 @@ android {
     }
 }
 
-//scaleDimens {
-//    baseSw = 360
-//    generateSwList = intArrayOf(360, 720)
-//}
+scaleDimens {
+    baseSw = 360
+    generateSwList = intArrayOf(360, 720)
+}
