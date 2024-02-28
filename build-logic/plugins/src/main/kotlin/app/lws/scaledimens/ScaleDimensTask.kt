@@ -38,8 +38,8 @@ abstract class ScaleDimensTask : DefaultTask() {
             return
         }
 
-        val baseValuesDirs = resourceDirectories.get()
-        if (baseValuesDirs.isEmpty()) {
+        val baseResDirs = resourceDirectories.get()
+        if (baseResDirs.isEmpty()) {
             return
         }
 
@@ -52,35 +52,38 @@ abstract class ScaleDimensTask : DefaultTask() {
 
         // 获取原始dimens
         val originDimens = mutableMapOf<String, Node>()
-        baseValuesDirs.forEach { it ->
-            val dir = File(it, "values")
-            if (dir.exists() && dir.isDirectory) {
-                val dbf: DocumentBuilderFactory = DocumentBuilderFactory.newInstance()
-                val db: DocumentBuilder = dbf.newDocumentBuilder()
-                dir.listFiles()?.forEach { file ->
-                    val document: Document = db.parse(file)
-                    val nodeList: NodeList = document.getElementsByTagName("dimen")
-                    for (i in 0 until nodeList.length) {
-                        val node: Node = nodeList.item(i)
-                        val dimensName = node.attributes.item(0).nodeValue
-                        if (originDimens[dimensName] == null) {
-                            originDimens[dimensName] = node
-                        } else {
-                            logger.log(
-                                LogLevel.DEBUG,
-                                "已经添加过dimensName=${dimensName}，忽略来自${it}的dimens"
-                            )
-                        }
-
-                    }
-                }
-            }
+        baseResDirs.forEach { it ->
+            collectDimens(originDimens, File(it, "values-sw${baseSw}dp"))
+            collectDimens(originDimens, File(it, "values"))
         }
 
         val originDimensSet = originDimens.values
         // 生成缩放后的dimens
         generateSwList.forEach { targetSw ->
             generateSwFile(baseSw, originDimensSet, targetSw)
+        }
+    }
+
+    private fun collectDimens(originDimens: MutableMap<String, Node>, dir: File) {
+        if (dir.exists() && dir.isDirectory) {
+            val dbf: DocumentBuilderFactory = DocumentBuilderFactory.newInstance()
+            val db: DocumentBuilder = dbf.newDocumentBuilder()
+            dir.listFiles()?.forEach { file ->
+                val document: Document = db.parse(file)
+                val nodeList: NodeList = document.getElementsByTagName("dimen")
+                for (i in 0 until nodeList.length) {
+                    val node: Node = nodeList.item(i)
+                    val dimensName = node.attributes.item(0).nodeValue
+                    if (originDimens[dimensName] == null) {
+                        originDimens[dimensName] = node
+                    } else {
+                        logger.log(
+                            LogLevel.DEBUG,
+                            "已经添加过dimensName=${dimensName}，忽略来自${dir}的dimens"
+                        )
+                    }
+                }
+            }
         }
     }
 
