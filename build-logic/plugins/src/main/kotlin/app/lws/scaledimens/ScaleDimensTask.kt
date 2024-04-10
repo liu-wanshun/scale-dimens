@@ -54,17 +54,32 @@ abstract class ScaleDimensTask : DefaultTask() {
         val originDimens = mutableMapOf<String, Node>()
         baseResDirs.forEach { it ->
             collectDimens(originDimens, File(it, "values-sw${baseSw}dp"))
-            collectDimens(originDimens, File(it, "values"))
         }
-
         val originDimensSet = originDimens.values
         // 生成缩放后的dimens
         generateSwList.forEach { targetSw ->
-            generateSwFile(baseSw, originDimensSet, targetSw)
+            // 如果sw路径已经存在,不需要生成
+            if (targetSw != baseSw) {
+                generateSwFile(baseSw, originDimensSet, targetSw)
+            }
+        }
+        // 获取默认的原始dimens
+        val originDefaultDimens = mutableMapOf<String, Node>()
+        baseResDirs.forEach { it ->
+            originDefaultDimens.putAll(collectDimens(originDimens, File(it, "values")))
+        }
+        val originDefaultDimensSet = originDefaultDimens.values
+        // 生成缩放后的dimens
+        generateSwList.forEach { targetSw ->
+            generateSwFile(baseSw, originDefaultDimensSet, targetSw)
         }
     }
 
-    private fun collectDimens(originDimens: MutableMap<String, Node>, dir: File) {
+    private fun collectDimens(
+        originDimens: MutableMap<String, Node>,
+        dir: File
+    ): MutableMap<String, Node> {
+        val currentDimens = mutableMapOf<String, Node>()
         if (dir.exists() && dir.isDirectory) {
             val dbf: DocumentBuilderFactory = DocumentBuilderFactory.newInstance()
             val db: DocumentBuilder = dbf.newDocumentBuilder()
@@ -76,6 +91,7 @@ abstract class ScaleDimensTask : DefaultTask() {
                     val dimensName = node.attributes.item(0).nodeValue
                     if (originDimens[dimensName] == null) {
                         originDimens[dimensName] = node
+                        currentDimens[dimensName] = node
                     } else {
                         logger.log(
                             LogLevel.DEBUG,
@@ -85,6 +101,7 @@ abstract class ScaleDimensTask : DefaultTask() {
                 }
             }
         }
+        return currentDimens
     }
 
 
