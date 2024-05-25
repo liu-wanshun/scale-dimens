@@ -15,6 +15,10 @@ import org.w3c.dom.NodeList
 import java.io.File
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.transform.OutputKeys
+import javax.xml.transform.TransformerFactory
+import javax.xml.transform.dom.DOMSource
+import javax.xml.transform.stream.StreamResult
 
 abstract class ScaleDimensTask : DefaultTask() {
 
@@ -110,38 +114,37 @@ abstract class ScaleDimensTask : DefaultTask() {
         val targetFile =
             File(outputFolder.asFile.get(), "values-sw${targetSw}dp/values.xml")
         targetFile.parentFile.mkdirs()
+        val document: Document =
+            if (!targetFile.exists()) {
+                targetFile.createNewFile()
+                DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument()
+            } else {
+                DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(targetFile)
+            }
         val scale = targetSw / baseSw.toFloat()
 
-        val targetValue = StringBuffer()
-        targetValue.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
-        targetValue.append("<resources>\n")
+        val resources = document.getElementsByTagName("resources").item(0)
+            ?: document.createElement("resources").also { document.appendChild(it) }
 
         originDimens.forEach { node ->
             val attrs: NamedNodeMap = node.attributes
-            val childNodes: NodeList = node.childNodes
-            val nodeValue: String = childNodes.item(0).nodeValue
-            if (nodeValue.contains("dp") || nodeValue.contains("sp")) {
+            val textContent: String = node.textContent
+            if (textContent.endsWith("dp") || textContent.endsWith("sp")) {
                 val attr: Node = attrs.item(0)
-                val elementStrBuilder = StringBuilder()
-                elementStrBuilder.append("<dimen " + attr.nodeName + "=\"" + attr.nodeValue + "\">")
-                if (nodeValue.contains("dp")) {
-                    val value = java.lang.Float.valueOf(nodeValue.replace("dp", ""))
-                    elementStrBuilder.append((value * scale).toString() + "dp")
-                } else if (nodeValue.contains("sp")) {
-                    val value = java.lang.Float.valueOf(nodeValue.replace("sp", ""))
-                    elementStrBuilder.append((value * scale).toString() + "sp")
-                }
-                elementStrBuilder.append("</dimen>")
-                targetValue.append(
-                    """
-                    $elementStrBuilder
+                val dimen = document.createElement("dimen")
+                dimen.setAttribute(attr.nodeName, attr.nodeValue)
+                val scaleValue = java.lang.Float.valueOf(
+                    textContent.substring(0, textContent.length - 2)
+                ) * scale
+                dimen.textContent =
+                    scaleValue.toString() + textContent.substring(textContent.length - 2)
 
-                    """.trimIndent()
-                )
+                resources.appendChild(dimen)
             }
         }
-        targetValue.append("</resources>")
-        targetFile.writeText(targetValue.toString())
+        val transformer = TransformerFactory.newInstance().newTransformer()
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes")
+        transformer.transform(DOMSource(document), StreamResult(targetFile))
     }
 
 
