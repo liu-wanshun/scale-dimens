@@ -9,6 +9,7 @@
 
 Using the [plugins DSL](https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block):
 
+
 ```kotlin
 pluginManagement {
    repositories {
@@ -19,11 +20,19 @@ pluginManagement {
 }
 
 plugins {
-    id("io.github.liu-wanshun.scale-dimens") version "<latest version>"
+    id("io.github.liu-wanshun.scale-dimens") version "1.0.3"
 }
 ```
 
-Using [legacy plugin application](https://docs.gradle.org/current/userguide/plugins.html#sec:old_plugin_application):
+
+<details>
+  <summary>Using <code>apply plugin</code> (the old way) </summary>
+
+
+
+[legacy plugin application](https://docs.gradle.org/current/userguide/plugins.html#sec:old_plugin_application)
+
+[Learn how to apply plugins to subprojects](https://docs.gradle.org/current/userguide/plugins.html#sec:subprojects_plugins_dsl)
 
 ```kotlin
 buildscript {
@@ -33,20 +42,35 @@ buildscript {
         }
     }
     dependencies {
-        classpath("io.github.liu-wanshun.scale-dimens:plugins:<latest version>")
+        classpath("io.github.liu-wanshun.scale-dimens:plugins:1.0.3")
     }
 }
 
 apply(plugin = "io.github.liu-wanshun.scale-dimens")
 ```
 
-[Learn how to apply plugins to subprojects](https://docs.gradle.org/current/userguide/plugins.html#sec:subprojects_plugins_dsl)
+</details>
+
+
+
+
 
 ## Example for config plugin
+
+Kotlin DSL:
 
 ```kotlin
 scaleDimens {
     baseSw = 360
     generateSwList = intArrayOf(360, 720)
+}
+```
+
+Groovy DSL:
+
+```gradle
+scaleDimens {
+      baseSw = 360
+      generateSwList = [360, 720]
 }
 ```
