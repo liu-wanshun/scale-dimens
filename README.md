@@ -5,6 +5,13 @@
 
       A gradle plugin for generate scaled dimens
 
+## Compatibility
+
+|     | Minimum version | 
+|-----|----------------:|
+| AGP |           7.4.0 |  
+| JDK |              11 |  
+
 ## Add Gradle Plugin
 
 Using the [plugins DSL](https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block):
@@ -20,7 +27,7 @@ pluginManagement {
 }
 
 plugins {
-    id("io.github.liu-wanshun.scale-dimens") version "1.0.4"
+    id("io.github.liu-wanshun.scale-dimens") version "1.0.5"
 }
 ```
 
@@ -42,7 +49,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("io.github.liu-wanshun.scale-dimens:plugins:1.0.4")
+        classpath("io.github.liu-wanshun.scale-dimens:plugins:1.0.5")
     }
 }
 

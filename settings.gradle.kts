@@ -21,5 +21,3 @@ dependencyResolutionManagement {
 include(":app")
 include(":library")
 include(":build-logic:plugins")
-
-enableFeaturePreview("VERSION_CATALOGS")
