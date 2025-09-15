@@ -20,7 +20,7 @@ pluginManagement {
 }
 
 plugins {
-    id("io.github.liu-wanshun.scale-dimens") version "1.0.3"
+    id("io.github.liu-wanshun.scale-dimens") version "1.0.4"
 }
 ```
 
