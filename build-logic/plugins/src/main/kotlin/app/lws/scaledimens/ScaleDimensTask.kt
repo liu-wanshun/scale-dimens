@@ -53,37 +53,20 @@ abstract class ScaleDimensTask : DefaultTask() {
             return
         }
 
-
         // 获取原始dimens
-        val originDimens = mutableMapOf<String, Node>()
+        val baseDimens = mutableMapOf<String, Node>()
         baseResDirs.forEach { it ->
-            collectDimens(originDimens, File(it, "values-sw${baseSw}dp"))
+            collectDimens(File(it, "values-sw${baseSw}dp"), baseDimens)
+            collectDimens(File(it, "values"), baseDimens)
         }
-        val originDimensSet = originDimens.values
+        logger.log(LogLevel.INFO, "collectDimens done, size ${baseDimens.size} ")
         // 生成缩放后的dimens
         generateSwList.forEach { targetSw ->
-            // 如果sw路径已经存在,不需要生成
-            if (targetSw != baseSw) {
-                generateSwFile(baseSw, originDimensSet, targetSw)
-            }
-        }
-        // 获取默认的原始dimens
-        val originDefaultDimens = mutableMapOf<String, Node>()
-        baseResDirs.forEach { it ->
-            originDefaultDimens.putAll(collectDimens(originDimens, File(it, "values")))
-        }
-        val originDefaultDimensSet = originDefaultDimens.values
-        // 生成缩放后的dimens
-        generateSwList.forEach { targetSw ->
-            generateSwFile(baseSw, originDefaultDimensSet, targetSw)
+            generateSwFile(baseResDirs, baseSw, baseDimens.values, targetSw)
         }
     }
 
-    private fun collectDimens(
-        originDimens: MutableMap<String, Node>,
-        dir: File
-    ): MutableMap<String, Node> {
-        val currentDimens = mutableMapOf<String, Node>()
+    private fun collectDimens(dir: File, destination: MutableMap<String, Node>) {
         if (dir.exists() && dir.isDirectory) {
             val dbf: DocumentBuilderFactory = DocumentBuilderFactory.newInstance()
             val db: DocumentBuilder = dbf.newDocumentBuilder()
@@ -93,23 +76,35 @@ abstract class ScaleDimensTask : DefaultTask() {
                 for (i in 0 until nodeList.length) {
                     val node: Node = nodeList.item(i)
                     val dimensName = node.attributes.item(0).nodeValue
-                    if (originDimens[dimensName] == null) {
-                        originDimens[dimensName] = node
-                        currentDimens[dimensName] = node
+                    if (destination[dimensName] == null) {
+                        destination[dimensName] = node
+                        logger.log(LogLevel.DEBUG, "find dimens = $dimensName from $dir")
                     } else {
                         logger.log(
                             LogLevel.DEBUG,
-                            "已经添加过dimensName=${dimensName}，忽略来自${dir}的dimens"
+                            "already added dimensName=$dimensName,ignore this from $dir"
                         )
                     }
                 }
             }
+        } else {
+            logger.log(LogLevel.INFO, "can't find $dir")
         }
-        return currentDimens
     }
 
 
-    private fun generateSwFile(baseSw: Int, originDimens: MutableCollection<Node>, targetSw: Int) {
+    private fun generateSwFile(
+        baseResDirs: Set<File>,
+        baseSw: Int,
+        originDimens: MutableCollection<Node>,
+        targetSw: Int
+    ) {
+
+        val targetDimens = mutableMapOf<String, Node>()
+        baseResDirs.forEach { it ->
+            collectDimens(File(it, "values-sw${targetSw}dp"), targetDimens)
+        }
+
 
         val targetFile =
             File(outputFolder.asFile.get(), "values-sw${targetSw}dp/values.xml")
@@ -131,6 +126,13 @@ abstract class ScaleDimensTask : DefaultTask() {
             val textContent: String = node.textContent
             if (textContent.endsWith("dp") || textContent.endsWith("sp")) {
                 val attr: Node = attrs.item(0)
+                if (targetDimens[attr.nodeValue] != null) {
+                    logger.log(
+                        LogLevel.DEBUG,
+                        "origin already has dimens = ${attr.nodeValue} ,not need generate"
+                    )
+                    return@forEach
+                }
                 val dimen = document.createElement("dimen")
                 dimen.setAttribute(attr.nodeName, attr.nodeValue)
                 val scaleValue = java.lang.Float.valueOf(
