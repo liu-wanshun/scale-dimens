@@ -6,16 +6,17 @@ plugins {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(11))
     }
 }
 
 dependencies {
     compileOnly(libs.android.gradlePlugin.api)
-    compileOnly("com.android.tools.build:gradle:8.1.0")
+    compileOnly(libs.android.gradlePlugin.release)
     implementation(gradleKotlinDsl())
 }
 
+version = "1.0.4-SNAPSHOT"
 gradlePlugin {
     plugins {
         create("scaleDimensPlugin") {

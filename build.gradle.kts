@@ -3,5 +3,5 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.jvm) apply false
     alias(libs.plugins.android.library) apply false
-    id("io.github.liu-wanshun.scale-dimens") version "1.0.2" apply false
+    id("io.github.liu-wanshun.scale-dimens") version "1.0.4-SNAPSHOT" apply false
 }
