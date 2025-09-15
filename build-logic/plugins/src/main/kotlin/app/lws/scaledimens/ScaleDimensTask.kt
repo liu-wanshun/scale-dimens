@@ -6,6 +6,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.w3c.dom.Document
@@ -26,7 +27,7 @@ abstract class ScaleDimensTask : DefaultTask() {
     abstract val outputFolder: DirectoryProperty
 
 
-    @get:Input
+    @get:InputFiles
     abstract val resourceDirectories: SetProperty<File>
 
     @get:Input

@@ -5,15 +5,17 @@ import com.android.build.gradle.api.AndroidBasePlugin
 import com.android.build.gradle.api.AndroidSourceDirectorySet
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
+import org.gradle.kotlin.dsl.withType
 import java.io.File
 
 class ScaleDimensPlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        project.plugins.withType(AndroidBasePlugin::class.java) {
+        project.plugins.withType<AndroidBasePlugin> {
 
             val extension =
-                project.extensions.create("scaleDimens", ScaleDimensExtension::class.java)
+                project.extensions.create<ScaleDimensExtension>("scaleDimens")
 
             val androidComponents =
                 project.extensions.getByType(AndroidComponentsExtension::class.java)
@@ -44,6 +46,7 @@ class ScaleDimensPlugin : Plugin<Project> {
                     variant.sources.res?.let {
                         val addSourceTaskProvider =
                             project.tasks.register<ScaleDimensTask>("scaleDimens${variant.name}") {
+                                group = "scale-dimens"
                                 this.resourceDirectories.set(resSourceDirectories)
                                 this.extension.set(extension)
                             }
