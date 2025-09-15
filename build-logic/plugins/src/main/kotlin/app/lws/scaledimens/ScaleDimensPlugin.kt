@@ -23,6 +23,14 @@ class ScaleDimensPlugin : Plugin<Project> {
             val resSourceDirectoriesBySourceSet = mutableMapOf<String, Set<File>>()
 
             androidComponents.apply {
+
+                finalizeDsl { common ->
+                    common.sourceSets
+                        .map { sourceSet -> sourceSet.name to (sourceSet.res as AndroidSourceDirectorySet).srcDirs }
+                        .forEach { resSourceDirectoriesBySourceSet[it.first] = it.second }
+
+                }
+
                 onVariants { variant ->
                     val relevantSourcesSets = setOfNotNull(
                         "main",
@@ -43,24 +51,16 @@ class ScaleDimensPlugin : Plugin<Project> {
                         }
                         .flatten()
 
-                    variant.sources.res?.let {
-                        val addSourceTaskProvider =
-                            project.tasks.register<ScaleDimensTask>("scaleDimens${variant.name}") {
-                                group = "scale-dimens"
-                                this.resourceDirectories.set(resSourceDirectories)
-                                this.extension.set(extension)
-                            }
-                        it.addGeneratedSourceDirectory(
-                            addSourceTaskProvider,
-                            ScaleDimensTask::outputFolder
-                        )
-                    }
-                }
-                finalizeDsl { common ->
-                    common.sourceSets
-                        .map { sourceSet -> sourceSet.name to (sourceSet.res as AndroidSourceDirectorySet).srcDirs }
-                        .forEach { resSourceDirectoriesBySourceSet[it.first] = it.second }
-
+                    val addSourceTaskProvider =
+                        project.tasks.register<ScaleDimensTask>("scaleDimens${variant.name}") {
+                            group = "scale-dimens"
+                            this.resourceDirectories.set(resSourceDirectories)
+                            this.extension.set(extension)
+                        }
+                    variant.sources.res?.addGeneratedSourceDirectory(
+                        addSourceTaskProvider,
+                        ScaleDimensTask::outputFolder
+                    )
                 }
             }
         }
