@@ -42,7 +42,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("io.github.liu-wanshun.scale-dimens:plugins:1.0.3")
+        classpath("io.github.liu-wanshun.scale-dimens:plugins:1.0.4")
     }
 }
 
