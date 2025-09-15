@@ -5,14 +5,18 @@ plugins {
 }
 
 java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
     }
 }
 
 dependencies {
-    compileOnly(libs.android.gradlePlugin.api)
-    compileOnly(libs.android.gradlePlugin.release)
+    compileOnly("com.android.tools.build:gradle-api:7.4.0")
+    compileOnly("com.android.tools.build:gradle:7.4.0")
     implementation(gradleKotlinDsl())
 }
 

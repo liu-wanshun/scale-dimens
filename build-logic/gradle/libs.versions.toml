@@ -1,10 +1,5 @@
 [versions]
-androidGradlePlugin = "7.4.0"
-kotlin = "1.9.20"
-
-[libraries]
-android-gradlePlugin-api = { group = "com.android.tools.build", name = "gradle-api", version.ref = "androidGradlePlugin" }
-android-gradlePlugin-release = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
+kotlin = "1.9.25"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
