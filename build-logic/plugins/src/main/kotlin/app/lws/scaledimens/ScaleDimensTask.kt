@@ -13,7 +13,10 @@ import org.w3c.dom.Document
 import org.w3c.dom.NamedNodeMap
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
+import org.yaml.snakeyaml.Yaml
 import java.io.File
+import java.io.FileInputStream
+import java.io.InputStream
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.OutputKeys
@@ -30,6 +33,9 @@ abstract class ScaleDimensTask : DefaultTask() {
     @get:InputFiles
     abstract val resourceDirectories: SetProperty<File>
 
+    @get:InputFiles
+    abstract val configs: Property<File>
+
     @get:Input
     abstract val extension: Property<ScaleDimensExtension>
 
@@ -38,32 +44,43 @@ abstract class ScaleDimensTask : DefaultTask() {
     fun taskAction() {
         outputFolder.asFile.get().deleteRecursively()
 
-        val baseSw: Int = extension.get().baseSw
-        if (baseSw == 0) {
-            return
-        }
-
         val baseResDirs = resourceDirectories.get()
         if (baseResDirs.isEmpty()) {
             return
         }
 
+        val input: InputStream = FileInputStream(configs.get())
+
+        val configData = Yaml().loadAs(input, Config::class.java)
+
+        logger.log(LogLevel.WARN, "list =  ${configData.javaClass} ${configData.toString()} ")
+
+        // 兼容旧版sw方案
+        val list = configData.config.toMutableList()
+        val baseSw: Int = extension.get().baseSw
         val generateSwList: IntArray = extension.get().generateSwList
-
-        if (generateSwList.isEmpty()) {
-            return
+        if (baseSw != 0 && !generateSwList.isEmpty()) {
+            val generateSwQualifier = generateSwList.map { targetSw ->
+                TargetQualifier(targetSw / baseSw.toFloat(), "sw${targetSw}dp")
+            }.toMutableList()
+            list.add(ScaleDimensConfig("sw${baseSw}dp", generateSwQualifier))
         }
 
-        // 获取原始dimens
-        val baseDimens = mutableMapOf<String, Node>()
-        baseResDirs.forEach { it ->
-            collectDimens(File(it, "values-sw${baseSw}dp"), baseDimens)
-            collectDimens(File(it, "values"), baseDimens)
-        }
-        logger.log(LogLevel.INFO, "collectDimens done, size ${baseDimens.size} ")
-        // 生成缩放后的dimens
-        generateSwList.forEach { targetSw ->
-            generateSwFile(baseResDirs, baseSw, baseDimens.values, targetSw)
+        for (config in list) {
+            // 获取原始dimens
+            val baseDimens = mutableMapOf<String, Node>()
+            baseResDirs.forEach { it ->
+                collectDimens(File(it, "values-${config.baseQualifier}"), baseDimens)
+                collectDimens(File(it, "values"), baseDimens)
+            }
+            logger.log(
+                LogLevel.INFO,
+                "collectDimens ${config.baseQualifier} done, size ${baseDimens.size} "
+            )
+            // 生成缩放后的dimens
+            config.generateQualifier.forEach { targetQualifier ->
+                generateSwFile(baseResDirs, baseDimens.values, targetQualifier)
+            }
         }
     }
 
@@ -96,19 +113,19 @@ abstract class ScaleDimensTask : DefaultTask() {
 
     private fun generateSwFile(
         baseResDirs: Set<File>,
-        baseSw: Int,
         originDimens: MutableCollection<Node>,
-        targetSw: Int
+        targetQualifier: TargetQualifier
     ) {
 
+        val qualifier = targetQualifier.qualifier
         val targetDimens = mutableMapOf<String, Node>()
         baseResDirs.forEach { it ->
-            collectDimens(File(it, "values-sw${targetSw}dp"), targetDimens)
+            collectDimens(File(it, "values-$qualifier"), targetDimens)
         }
 
 
         val targetFile =
-            File(outputFolder.asFile.get(), "values-sw${targetSw}dp/values.xml")
+            File(outputFolder.asFile.get(), "values-$qualifier/values.xml")
         targetFile.parentFile.mkdirs()
         val document: Document =
             if (!targetFile.exists()) {
@@ -117,7 +134,7 @@ abstract class ScaleDimensTask : DefaultTask() {
             } else {
                 DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(targetFile)
             }
-        val scale = targetSw / baseSw.toFloat()
+        val scale = targetQualifier.scale
 
         val resources = document.getElementsByTagName("resources").item(0)
             ?: document.createElement("resources").also { document.appendChild(it) }
