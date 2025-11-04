@@ -1,0 +1,17 @@
+config:
+  - baseQualifier: "w2560dp"
+    generateQualifier:
+      - qualifier: "w2133dp"
+        scale: 1f
+
+      - qualifier: "w1600dp"
+        scale: 1f
+
+
+  - baseQualifier: "w2560dp-h1440dp"
+    generateQualifier:
+      - qualifier: "w2163dp-h1216dp"
+        scale: 1f
+
+      - qualifier: "w1000dp-h900dp"
+        scale: 2f
