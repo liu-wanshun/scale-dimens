@@ -56,6 +56,7 @@ class ScaleDimensPlugin : Plugin<Project> {
                             group = "scale-dimens"
                             this.resourceDirectories.set(resSourceDirectories)
                             this.extension.set(extension)
+                            this.configs.set(File(extension.configPath))
                         }
                     variant.sources.res?.addGeneratedSourceDirectory(
                         addSourceTaskProvider,
