@@ -15,6 +15,8 @@ android {
     scaleDimens {
         baseSw = 360
         generateSwList = intArrayOf(360, 720)
+        configPath = rootProject.file("scale-demens.yaml").absolutePath
+        println("configPath = $configPath")
     }
 }
 

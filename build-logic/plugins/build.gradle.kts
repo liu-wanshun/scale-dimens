@@ -18,9 +18,10 @@ dependencies {
     compileOnly("com.android.tools.build:gradle-api:7.4.0")
     compileOnly("com.android.tools.build:gradle:7.4.0")
     implementation(gradleKotlinDsl())
+    implementation("org.yaml:snakeyaml:2.5")
 }
 
-version = "1.0.4-SNAPSHOT"
+version = "1.0.6-SNAPSHOT"
 gradlePlugin {
     plugins {
         create("scaleDimensPlugin") {
