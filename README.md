@@ -1,6 +1,8 @@
 # scale-dimens
 
 [![jitpack](https://jitpack.io/v/io.github.liu-wanshun/scale-dimens.svg)](https://jitpack.io/#io.github.liu-wanshun/scale-dimens)
+[![Weekly download statistics](https://jitpack.io/v/io.github.liu-wanshun/scale-dimens/week.svg)](https://jitpack.io/#io.github.liu-wanshun/scale-dimens)
+[![Monthly download statistics](https://jitpack.io/v/io.github.liu-wanshun/scale-dimens/month.svg)](https://jitpack.io/#io.github.liu-wanshun/scale-dimens)
 [![license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)
 
       A gradle plugin for generate scaled dimens
@@ -27,7 +29,7 @@ pluginManagement {
 }
 
 plugins {
-    id("io.github.liu-wanshun.scale-dimens") version "1.0.5"
+    id("io.github.liu-wanshun.scale-dimens") version "2.0.0-SNAPSHOT"
 }
 ```
 
@@ -49,7 +51,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("io.github.liu-wanshun.scale-dimens:plugins:1.0.5")
+        classpath("io.github.liu-wanshun.scale-dimens:plugins:2.0.0-SNAPSHOT")
     }
 }
 
@@ -64,20 +66,12 @@ apply(plugin = "io.github.liu-wanshun.scale-dimens")
 
 ## Example for config plugin
 
-Kotlin DSL:
+Kotlin DSL / Groovy DSL :
 
 ```kotlin
 scaleDimens {
-    baseSw = 360
-    generateSwList = intArrayOf(360, 720)
+    configPath = rootProject.file("scale-demens.yaml")
 }
 ```
 
-Groovy DSL:
-
-```gradle
-scaleDimens {
-      baseSw = 360
-      generateSwList = [360, 720]
-}
-```
+Example configPath file : [scale-demens.yaml](scale-demens.yaml)
