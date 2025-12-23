@@ -54,9 +54,8 @@ class ScaleDimensPlugin : Plugin<Project> {
                     val addSourceTaskProvider =
                         project.tasks.register<ScaleDimensTask>("scaleDimens${variant.name}") {
                             group = "scale-dimens"
-                            this.resourceDirectories.set(resSourceDirectories)
-                            this.extension.set(extension)
-                            this.configs.set(File(extension.configPath))
+                            this.resourceDirectories.setFrom(resSourceDirectories)
+                            this.configs.convention(extension.configPath)
                         }
                     variant.sources.res?.addGeneratedSourceDirectory(
                         addSourceTaskProvider,

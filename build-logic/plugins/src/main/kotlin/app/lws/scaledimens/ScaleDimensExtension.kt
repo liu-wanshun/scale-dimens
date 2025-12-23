@@ -1,12 +1,12 @@
 package app.lws.scaledimens
 
-interface ScaleDimensExtension {
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.model.ObjectFactory
+import javax.inject.Inject
 
-    @Deprecated("Please use configPath")
-    var baseSw: Int
+open class ScaleDimensExtension @Inject constructor(
+    private val objects: ObjectFactory
+) {
 
-    @Deprecated("Please use configPath")
-    var generateSwList: IntArray
-
-    var configPath: String
+    val configPath: RegularFileProperty = objects.fileProperty()
 }

@@ -1,11 +1,11 @@
 package app.lws.scaledimens
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.logging.LogLevel
-import org.gradle.api.provider.Property
-import org.gradle.api.provider.SetProperty
-import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
@@ -31,40 +31,28 @@ abstract class ScaleDimensTask : DefaultTask() {
 
 
     @get:InputFiles
-    abstract val resourceDirectories: SetProperty<File>
+    abstract val resourceDirectories: ConfigurableFileCollection
 
-    @get:InputFiles
-    abstract val configs: Property<File>
-
-    @get:Input
-    abstract val extension: Property<ScaleDimensExtension>
+    @get:InputFile
+    abstract val configs: RegularFileProperty
 
 
     @TaskAction
     fun taskAction() {
         outputFolder.asFile.get().deleteRecursively()
 
-        val baseResDirs = resourceDirectories.get()
+        val baseResDirs = resourceDirectories.files
         if (baseResDirs.isEmpty()) {
             return
         }
 
-        val input: InputStream = FileInputStream(configs.get())
+        val input: InputStream = FileInputStream(configs.asFile.get())
 
         val configData = Yaml().loadAs(input, Config::class.java)
 
-        logger.log(LogLevel.WARN, "list =  ${configData.javaClass} ${configData.toString()} ")
+        logger.log(LogLevel.WARN, "list =  ${configData.javaClass} $configData ")
 
-        // 兼容旧版sw方案
-        val list = configData.config.toMutableList()
-        val baseSw: Int = extension.get().baseSw
-        val generateSwList: IntArray = extension.get().generateSwList
-        if (baseSw != 0 && !generateSwList.isEmpty()) {
-            val generateSwQualifier = generateSwList.map { targetSw ->
-                TargetQualifier(targetSw / baseSw.toFloat(), "sw${targetSw}dp")
-            }.toMutableList()
-            list.add(ScaleDimensConfig("sw${baseSw}dp", generateSwQualifier))
-        }
+        val list = configData.config
 
         for (config in list) {
             // 获取原始dimens
