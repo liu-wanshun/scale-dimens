@@ -1,6 +1,6 @@
 # scale-dimens
 
-[![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/io/github/liu-wanshun/scale-dimens/io.github.liu-wanshun.scale-dimens.gradle.plugin/maven-metadata.xml.svg?colorB=007ec6&label=gradlePluginPortal)](https://plugins.gradle.org/plugin/io.github.liu-wanshun.scale-dimens)
+[![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/io.github.liu-wanshun.scale-dimens)](https://plugins.gradle.org/plugin/io.github.liu-wanshun.scale-dimens)
 [![license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)
 
       A gradle plugin for generate scaled dimens
