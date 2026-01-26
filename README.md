@@ -9,8 +9,8 @@
 
 |     | Minimum version | 
 |-----|----------------:|
-| AGP |           7.4.0 |  
-| JDK |              11 |  
+| AGP |           8.4.0 |  
+| JDK |              17 |  
 
 ## Add Gradle Plugin
 

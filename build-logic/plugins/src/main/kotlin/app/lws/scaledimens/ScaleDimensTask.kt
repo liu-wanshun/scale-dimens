@@ -50,8 +50,6 @@ abstract class ScaleDimensTask : DefaultTask() {
 
         val configData = Yaml().loadAs(input, Config::class.java)
 
-        logger.log(LogLevel.WARN, "list =  ${configData.javaClass} $configData ")
-
         val list = configData.config
 
         for (config in list) {
