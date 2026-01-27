@@ -25,7 +25,7 @@ pluginManagement {
 }
 
 plugins {
-    id("io.github.liu-wanshun.scale-dimens") version "2.0.0"
+    id("io.github.liu-wanshun.scale-dimens") version "2.0.1"
 }
 ```
 
@@ -45,7 +45,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("io.github.liu-wanshun.scale-dimens:plugins:2.0.0")
+        classpath("io.github.liu-wanshun.scale-dimens:plugins:2.0.1")
     }
 }
 
