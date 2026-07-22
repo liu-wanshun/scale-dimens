@@ -27,6 +27,14 @@ dependencies {
 
 group = "io.github.liu-wanshun"
 version = "2.0.1"
+base.archivesName = "scale-dimens"
+publishing {
+    publications {
+        maybeCreate<MavenPublication>("pluginMaven").apply {
+            artifactId = base.archivesName.get()
+        }
+    }
+}
 gradlePlugin {
     website = "https://github.com/liu-wanshun/scale-dimens"
     vcsUrl = "https://github.com/liu-wanshun/scale-dimens"
